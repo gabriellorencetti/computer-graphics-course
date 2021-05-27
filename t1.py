@@ -14,6 +14,7 @@ angulo = 0
 height = 720
 width = 1280
 numVerticesCirculos = 32
+day_or_night = False
 
 def criar_matriz():
 	matriz = np.array([ 1.0, 0.0, 0.0, 0.0,
@@ -71,14 +72,16 @@ def eventos_teclado(window, key, scancode, action, mods):
 
 def eventos_mouse(window, button, action, mods):
 
-	global s_x
+	global s_x, day_or_night
 
 	if action == 1:
 		if button == 0:  # esquerdo
-			s_x -= 0.01
+			day_or_night = True
 
 		elif button == 1:  # direito
-			s_x += 0.01
+			day_or_night = False
+
+		
 
 def inicializar_janela(height, width):
 	glfw.init()
@@ -199,6 +202,47 @@ def criar_catavento():
 def rotacao_catavento():
 	return (multiplica_matriz(multiplica_matriz(translacao(-0.7, 0.3), rotacao(angulo)), translacao(+0.7, -0.3)))
 
+
+def criar_casa():
+
+	estruturaCasa = np.zeros(11, [("position", np.float32, 2)])
+
+	estruturaCasa['position'] = [
+		(+0.3,  0.0),	# vertice 0 parede
+		(+0.7,  0.0),	# vertice 1 parede
+		(+0.3, -0.6),	# vertice 2 parede
+		(+0.7, -0.6),	# vertice 3 parede
+
+		(+0.3,  0.0),	# vertice 0 telhado
+		(+0.7,  0.0),	# vertice 1 telhado
+		(+0.5, +0.3),	# vertice 2 telhado
+
+		(+0.45, -0.25),	# vertice 0 porta
+		(+0.55, -0.25),	# vertice 1 porta
+		(+0.45, -0.60),	# vertice 2 porta
+		(+0.55, -0.60)	# vertice 3 porta
+	]
+
+	janela = criar_circulo(0.1, numVerticesCirculos, 0.5, 0.05)
+	casa = np.concatenate((estruturaCasa, janela))
+
+	return casa
+
+def criar_balao():
+
+	circ_balao = criar_circulo(0.2, numVerticesCirculos, -0.1, 0.2)
+
+	triang_balao = np.zeros(3, [("position", np.float32, 2)])
+	
+	triang_balao['position'] = [
+		(-0.20, +0.11),	# vertice 0 chão
+		(-0.00, +0.11),	# vertice 1 chão
+		(-0.1, -0.15),	# vertice 2 chão		
+	]
+
+	return np.concatenate((triang_balao, circ_balao))
+
+
 def construir_objetos():
 	verticesA = np.zeros(8, [("position", np.float32, 2)])
 
@@ -221,7 +265,7 @@ def construir_objetos():
 
 	catavento = criar_catavento()
 
-	vertices = np.concatenate((verticesA, passaro, sol, catavento))
+	vertices = np.concatenate((verticesA, passaro, sol, catavento, criar_casa(), criar_balao()))
 
 	return vertices
 
@@ -258,11 +302,12 @@ def mostrar_janela(window, program, vertices):
 		glUniformMatrix4fv(loc, 1, GL_TRUE, mat_translation)
 
 		# Desenhando o chão
-		glUniform4f(loc_color, 0.0, 1.0, 0.0, 1.0)
+		glUniform4f(loc_color, 46/255, 139/255, 87/255, 1.0)
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
 
 		#Desenhando o céu
-		glUniform4f(loc_color, 0.0, 0.0, 1.0, 1.0)
+		if day_or_night == True: glUniform4f(loc_color, 135/255, 206/255, 235/255, 1.0)
+		else: glUniform4f(loc_color, 25/255, 25/255, 112/255, 1.0)
 		glDrawArrays(GL_TRIANGLE_STRIP, 4, 4)
 
 		### Desenhando o pássaro ###
@@ -287,7 +332,8 @@ def mostrar_janela(window, program, vertices):
 		glUniformMatrix4fv(loc, 1, GL_TRUE, mat_translation)
 		
 		### Desenhando o sol ###
-		glUniform4f(loc_color, 1.0, 1.0, 0.0, 1.0)
+		if day_or_night == True: glUniform4f(loc_color, 255/255, 215/255, 0.0, 1.0)
+		else: glUniform4f(loc_color, 169/255, 169/255, 169/255, 1.0)
 		glDrawArrays(GL_TRIANGLE_FAN, 25, numVerticesCirculos)
 
 		### Catavento ###
@@ -296,16 +342,16 @@ def mostrar_janela(window, program, vertices):
 
 		glUniformMatrix4fv(loc, 1, GL_TRUE, rotacao_catavento())
 
-		glUniform4f(loc_color, 0.8, 0.8, 0.8, 1.0)
+		glUniform4f(loc_color, 255/255, 218/255, 185/255, 1.0)
 		glDrawArrays(GL_TRIANGLES, 25+numVerticesCirculos+4, 3)
 
-		glUniform4f(loc_color, 0.8, 0.8, 0.8, 1.0)
+		glUniform4f(loc_color, 238/255, 232/255, 170/255, 1.0)
 		glDrawArrays(GL_TRIANGLES, 25+numVerticesCirculos+7, 3)
 
-		glUniform4f(loc_color, 0.8, 0.8, 0.8, 1.0)
+		glUniform4f(loc_color, 216/255, 191/255, 216/255, 1.0)
 		glDrawArrays(GL_TRIANGLES, 25+numVerticesCirculos+10, 3)
 
-		glUniform4f(loc_color, 0.8, 0.8, 0.8, 1.0)
+		glUniform4f(loc_color, 176/255, 224/255, 230/255, 1.0)
 		glDrawArrays(GL_TRIANGLES, 25+numVerticesCirculos+13, 3)
 
 		mat_translation = criar_matriz()
@@ -313,8 +359,26 @@ def mostrar_janela(window, program, vertices):
 		glUniform4f(loc_color, 1.0, 1.0, 1.0, 1.0)
 		glDrawArrays(GL_TRIANGLE_FAN, 25+numVerticesCirculos+16, numVerticesCirculos)
 
-		
-		
+		######### --- Casa --- #########
+		glUniform4f(loc_color, 1.0, 0.98, 0.5, 1.0)
+		glDrawArrays(GL_TRIANGLE_STRIP, 25+numVerticesCirculos*2+16, 4)
+
+		#glUniform4f(loc_color, 0.8, 0.8, 0.8, 1.0)
+		glDrawArrays(GL_TRIANGLES, 25+numVerticesCirculos*2+20, 3)
+
+		glUniform4f(loc_color, 160/255, 82/255, 45/255, 1.0)
+		glDrawArrays(GL_TRIANGLE_STRIP, 25+numVerticesCirculos*2+23, 4)
+
+		glUniform4f(loc_color, 176/255, 224/255, 230/255, 1.0)
+		glDrawArrays(GL_TRIANGLE_FAN, 25+numVerticesCirculos*2+27, numVerticesCirculos)
+
+
+		######### --- Balão --- #########
+		glUniform4f(loc_color, 148/255, 0.0, 211/255, 1.0)
+		glDrawArrays(GL_TRIANGLES, 25+numVerticesCirculos*3+27, 3)
+
+		#glUniform4f(loc_color, 0.7, 0.2, 0.5, 1.0)
+		glDrawArrays(GL_TRIANGLE_FAN, 25+numVerticesCirculos*3+30, numVerticesCirculos)
 		
 
 		glfw.swap_buffers(window)
