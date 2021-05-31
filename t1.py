@@ -307,7 +307,31 @@ def criar_balao():
 
 	return np.concatenate((triang_balao, circ_balao, caixa))
 
+def criar_lago():
 
+	dir = criar_circulo(0.3, numVerticesCirculos, -0.15, -0.8)
+	esq = criar_circulo(0.3, numVerticesCirculos, -0.35, -0.8)
+
+	peixe = np.zeros(9, [("position", np.float32, 2)])
+
+	peixe['position'] = [
+		(-0.34, -0.66),	# vertice 0 chão
+		(-0.34, -0.74),	# vertice 1 chão
+		(-0.30, -0.70),	# vertice 2 chão
+
+		(-0.30, -0.70),	# vertice 3 chão
+		(-0.22, -0.62),	# vertice 0 céu
+		(-0.22, -0.78),	# vertice 1 céu
+
+		(-0.22, -0.62),	# vertice 0 céu
+		(-0.22, -0.78),	# vertice 3 céu
+		(-0.16, -0.70)
+
+	]
+	
+
+	return np.concatenate((dir, esq, peixe))
+	
 def construir_objetos():
 	verticesA = np.zeros(8, [("position", np.float32, 2)])
 
@@ -324,13 +348,10 @@ def construir_objetos():
 
 	]
 
-	passaro = criar_pássaro()
-
 	sol = criar_circulo(0.2, numVerticesCirculos, 0.8, 0.7)
 
-	catavento = criar_catavento()
-
-	vertices = np.concatenate((verticesA, passaro, sol, catavento, criar_casa(), criar_balao()))
+	vertices = np.concatenate((verticesA, criar_pássaro(), sol, 
+		criar_catavento(), criar_casa(), criar_balao(), criar_lago()))
 
 	return vertices
 
@@ -372,7 +393,7 @@ def mostrar_janela(window, program, vertices):
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
 
 		#Desenhando o céu
-		if day_or_night == True: glUniform4f(loc_color, 135/255, 206/255, 235/255, 1.0)
+		if day_or_night == False: glUniform4f(loc_color, 135/255, 206/255, 235/255, 1.0)
 		else: glUniform4f(loc_color, 25/255, 25/255, 112/255, 1.0)
 		glDrawArrays(GL_TRIANGLE_STRIP, 4, 4)
 
@@ -397,7 +418,7 @@ def mostrar_janela(window, program, vertices):
 		glUniformMatrix4fv(loc, 1, GL_TRUE, mat_translation)
 		
 		### Desenhando o sol ###
-		if day_or_night == True: glUniform4f(loc_color, 255/255, 215/255, 0.0, 1.0)
+		if day_or_night == False: glUniform4f(loc_color, 255/255, 215/255, 0.0, 1.0)
 		else: glUniform4f(loc_color, 169/255, 169/255, 169/255, 1.0)
 		glDrawArrays(GL_TRIANGLE_FAN, 25, numVerticesCirculos)
 
@@ -449,6 +470,22 @@ def mostrar_janela(window, program, vertices):
 
 		glUniform4f(loc_color, 160/255, 82/255, 45/255, 1.0)
 		glDrawArrays(GL_TRIANGLE_STRIP, 25+numVerticesCirculos*4+30, 4)
+		
+
+		######### --- Lago --- #########
+		glUniformMatrix4fv(loc, 1, GL_TRUE, mat_translation)
+		glUniform4f(loc_color, 59/255, 179/255, 208/255, 1.0)
+		glDrawArrays(GL_TRIANGLE_FAN, 25+numVerticesCirculos*4+34, numVerticesCirculos)
+		glDrawArrays(GL_TRIANGLE_FAN, 25+numVerticesCirculos*5+34, numVerticesCirculos)
+
+		glUniform4f(loc_color, 1.0, 140/255, 0.0, 1.0)
+		glDrawArrays(GL_TRIANGLES, 25+numVerticesCirculos*6+34, 3)
+
+		glUniform4f(loc_color, 0.0, 0.0, 128/255, 1.0)
+		glDrawArrays(GL_TRIANGLES, 25+numVerticesCirculos*6+37, 3)
+
+		glUniform4f(loc_color, 1.0, 140/255, 0.0, 1.0)
+		glDrawArrays(GL_TRIANGLES, 25+numVerticesCirculos*6+40, 3)
 		
 
 		glfw.swap_buffers(window)
