@@ -1,0 +1,13 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl orig_02___Default.002
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 0.588200 0.588200 0.588200
+Ks 0.000000 0.000000 0.000000
+Ke 0.588200 0.588200 0.588200
+Ni 1.500000
+d 1.000000
+illum 1
+map_Kd /home/gab/Documentos/CG/Cenario/interior/10233_Kitchen_Table_v2_L3.123c67f33ee4-203a-49ad-9b70-aec83cb2e21a/10233_Kitchen_Table_v1_Diffuse.jpg

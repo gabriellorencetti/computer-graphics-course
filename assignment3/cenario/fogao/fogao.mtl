@@ -1,0 +1,23 @@
+# Blender MTL File: 'None'
+# Material Count: 2
+
+newmtl 11657_Stove_with_Range
+Ns 66.999999
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.279000 0.279000 0.279000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd /home/gab/Documentos/CG/Cenario/interior/stove/11657_Stove-with-Range_diffuse.jpg
+
+newmtl glass
+Ns 89.000012
+Ka 1.000000 1.000000 1.000000
+Kd 0.733300 0.733300 0.733300
+Ks 0.135000 0.135000 0.135000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 0.420000
+illum 9
